@@ -286,11 +286,13 @@ export default function StudyCameraMonitor({
           if (!active) return;
           setModelLoading(false);
 
-          const ctx = canvas.getContext("2d");
+          const currentCanvas = canvasRef.current;
+          if (!currentCanvas) return;
+          const ctx = currentCanvas.getContext("2d");
           if (!ctx) return;
 
           // Clear canvas overlay
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.clearRect(0, 0, currentCanvas.width, currentCanvas.height);
 
           const currentAlerts: string[] = [];
 
@@ -310,8 +312,8 @@ export default function StudyCameraMonitor({
             for (const idx of keyLandmarks) {
               const pt = landmarks[idx];
               if (pt) {
-                const x = pt.x * canvas.width;
-                const y = pt.y * canvas.height;
+                const x = pt.x * currentCanvas.width;
+                const y = pt.y * currentCanvas.height;
                 ctx.beginPath();
                 ctx.arc(x, y, 1.5, 0, 2 * Math.PI);
                 ctx.fill();
