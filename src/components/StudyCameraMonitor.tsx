@@ -491,12 +491,14 @@ export default function StudyCameraMonitor({
 
         const runProcessing = async () => {
           if (!active) return;
+          const currentVideo = videoRef.current;
+          if (!currentVideo) return;
           const now = performance.now();
           if (now - lastProcessed >= fpsInterval) {
-            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+            if (currentVideo.readyState === currentVideo.HAVE_ENOUGH_DATA) {
               lastProcessed = now;
               try {
-                await faceMeshInstance.send({ image: video });
+                await faceMeshInstance.send({ image: currentVideo });
               } catch (err) {
                 console.error("FaceMesh send error:", err);
               }
