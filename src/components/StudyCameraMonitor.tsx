@@ -107,6 +107,16 @@ export default function StudyCameraMonitor({
     onUpdateStatsRef.current = onUpdateStats;
   }, [onUpdateStats]);
 
+  const onPauseTimerRef = useRef(onPauseTimer);
+  useEffect(() => {
+    onPauseTimerRef.current = onPauseTimer;
+  }, [onPauseTimer]);
+
+  const onResumeTimerRef = useRef(onResumeTimer);
+  useEffect(() => {
+    onResumeTimerRef.current = onResumeTimer;
+  }, [onResumeTimer]);
+
   // Emit stats back to parent screen only when values change
   useEffect(() => {
     if (onUpdateStatsRef.current) {
@@ -418,7 +428,7 @@ export default function StudyCameraMonitor({
                 if (sleepTicks > 40) {
                   setSleepIncidents((prev) => prev + 1);
                   setStatus("Study session paused. Sleeping detected.");
-                  onPauseTimer();
+                  onPauseTimerRef.current();
                 } else {
                   setStatus(`Extreme stillness/sleep alert... (${Math.max(1, Math.ceil((40 - sleepTicks) / 2))}s)`);
                 }
@@ -432,7 +442,7 @@ export default function StudyCameraMonitor({
                 if (distractedTicks > 60) {
                   setDistractions((prev) => prev + 1);
                   setStatus(isStaticCheat ? "Cheat warning. Timer paused." : "Study session paused. Distraction detected.");
-                  onPauseTimer();
+                  onPauseTimerRef.current();
                 } else {
                   setStatus(`Looking away alert... (${Math.max(1, Math.ceil((60 - distractedTicks) / 2))}s)`);
                 }
@@ -447,7 +457,7 @@ export default function StudyCameraMonitor({
                 distractedTicks = 0;
                 absentTicks = 0;
                 setStatus("Focus restored! Resuming session...");
-                onResumeTimer();
+                onResumeTimerRef.current();
               }
             }
 
@@ -463,7 +473,7 @@ export default function StudyCameraMonitor({
               if (absentTicks > 20) { // ~10 seconds (at 2 FPS processing rate)
                 setTimeAway((prev) => prev + 10);
                 setStatus("Study session paused. User absent.");
-                onPauseTimer();
+                onPauseTimerRef.current();
               } else {
                 setStatus(`Verifying presence... (${Math.max(1, Math.ceil((20 - absentTicks) / 2))}s)`);
               }
